@@ -1,0 +1,176 @@
+<div class="min-h-screen pb-20">
+  <!-- Top App Bar / Search Area -->
+  <div
+    class="sticky top-0 z-50 bg-md-sys-dark-surface/95 backdrop-blur-md pt-4 pb-2 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col gap-4">
+      <!-- Logo & Profile Row -->
+      <div class="flex justify-between items-center py-2">
+        <h1
+          class="text-2xl font-normal tracking-tight bg-gradient-to-r from-md-sys-dark-primary to-blue-400 bg-clip-text text-transparent">
+          Linkolor
+        </h1>
+
+        <div
+          class="w-10 h-10 rounded-full bg-md-sys-dark-surface-container-high flex items-center justify-center text-md-sys-dark-primary font-bold shadow-sm">
+          C8
+        </div>
+      </div>
+
+      <!-- Search Bar (Pill Shape) -->
+      <div class="relative group" id="buscador">
+        <div
+          class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <svg
+            class="h-5 w-5 text-md-sys-dark-outline"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          class="block w-full pl-12 pr-4 py-3.5 rounded-full bg-md-sys-dark-surface-container-high border-none text-md-sys-dark-on-surface placeholder:text-md-sys-dark-outline focus:ring-2 focus:ring-md-sys-dark-primary/50 transition-shadow shadow-sm hover:shadow-md"
+          placeholder="Buscar likes, archivados, etc..." />
+      </div>
+
+      <!-- Filter Chips & Icon -->
+      <div class="flex items-center gap-2">
+        <div
+          class="flex-1 flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+          <button
+            (click)="selectedCategory.set(null)"
+            [class]="
+              !selectedCategory()
+                ? 'bg-md-sys-dark-primary text-md-sys-dark-on-primary shadow-sm border-transparent'
+                : 'bg-md-sys-dark-surface-container text-md-sys-dark-on-surface border-md-sys-dark-outline-variant hover:bg-md-sys-dark-surface-container-high'
+            "
+            class="px-5 py-2 rounded-lg font-medium text-sm whitespace-nowrap border transition-colors">
+            All
+          </button>
+
+          @for (category of categoryService.categories(); track category.id) {
+          <button
+            (click)="toggleCategory(category.id)"
+            [class]="
+              selectedCategory() === category.id
+                ? 'bg-md-sys-dark-primary text-md-sys-dark-on-primary shadow-sm border-transparent'
+                : 'bg-md-sys-dark-surface-container text-md-sys-dark-on-surface border-md-sys-dark-outline-variant hover:bg-md-sys-dark-surface-container-high'
+            "
+            class="px-5 py-2 rounded-lg font-medium text-sm whitespace-nowrap border transition-colors capitalize">
+            {{ category.name }}
+          </button>
+          }
+        </div>
+
+        <!-- Filter Platforms Toggle -->
+        <button
+          (click)="showPlatformFilter.set(!showPlatformFilter())"
+          [class]="
+            showPlatformFilter()
+              ? 'bg-md-sys-dark-primary/20 text-md-sys-dark-primary border-md-sys-dark-primary/30'
+              : 'bg-md-sys-dark-surface-container text-md-sys-dark-outline border-md-sys-dark-outline-variant'
+          "
+          class="shrink-0 p-2.5 rounded-xl border transition-all hover:scale-105 active:scale-95"
+          title="Filtrar por plataforma">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Platform Selection (Animates in) -->
+      @if (showPlatformFilter()) {
+      <div
+        class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide animate-in slide-in-from-top-2 duration-300">
+        @for (p of platforms; track p) {
+        <button
+          (click)="togglePlatform(p)"
+          [class]="
+            selectedPlatform() === p
+              ? 'bg-md-sys-dark-secondary-container text-md-sys-dark-on-secondary-container shadow-sm border-transparent'
+              : 'bg-md-sys-dark-surface-container-low text-md-sys-dark-outline border-md-sys-dark-outline-variant/30 hover:bg-md-sys-dark-surface-container'
+          "
+          class="px-4 py-1.5 rounded-full font-medium text-xs whitespace-nowrap border transition-all capitalize">
+          {{ p }}
+        </button>
+        }
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="px-4 max-w-7xl mx-auto mt-4">
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      @if (linkService.loading()) {
+      <div
+        class="col-span-full flex flex-col items-center justify-center py-24 text-md-sys-dark-outline">
+        <div
+          class="animate-spin h-10 w-10 border-4 border-md-sys-dark-primary border-t-transparent rounded-full mb-4"></div>
+        <p>Loading your collection...</p>
+      </div>
+      } @else if (filteredLinks().length === 0) {
+      <div
+        class="col-span-full flex flex-col items-center justify-center py-24 text-md-sys-dark-outline">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-24 w-24 mb-4 opacity-20"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <p class="text-xl font-display">No se han encontrado enlaces</p>
+        <p class="text-sm mt-2" *ngIf="!searchTerm()">
+          Pulsa en el botón + para añadir un nuevo enlace
+        </p>
+      </div>
+      } @else { @for (link of filteredLinks(); track link.id) {
+      <app-link-card
+        [link]="link"
+        (onDelete)="deleteLink($event)"
+        (onEdit)="editLink($event)"
+        class="animate-in fade-in zoom-in-95 duration-500 fill-mode-both"
+        [style.animation-delay]="$index * 50 + 'ms'"></app-link-card>
+      } }
+    </div>
+  </div>
+
+  <!-- FAB (Floating Action Button) -->
+  <a
+    routerLink="/add"
+    class="fixed bottom-6 right-6 h-16 w-16 bg-md-sys-dark-primary text-md-sys-dark-on-primary rounded-[1.2rem] shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center z-50">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </a>
+</div>

@@ -1,15 +1,30 @@
-import { Injectable, signal, computed, inject, effect } from '@angular/core';
-import { Firestore, collection, addDoc, deleteDoc, doc, updateDoc, collectionData, query, orderBy, Timestamp } from '@angular/fire/firestore';
-import { Link, Category } from '../models/data.models';
-import { Observable, catchError, of } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { Firestore, collection, addDoc, deleteDoc, doc, updateDoc, query, orderBy, getDocs, getDoc } from '@angular/fire/firestore';
+import { Link } from '../models/data.models';
+import { from, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LinkService {
   private firestore = inject(Firestore);
-  
+
+  async getLinkById(id: string): Promise<Link | undefined> {
+    const existing = this._links().find(l => l.id === id);
+    if (existing) return existing;
+
+    try {
+      const docRef = doc(this.firestore, 'links', id);
+      const snapshot = await getDoc(docRef);
+      if (snapshot.exists()) {
+        return { id: snapshot.id, ...snapshot.data() } as Link;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return undefined;
+  }
+
   // State
   private _links = signal<Link[]>([]);
   private _loading = signal<boolean>(true);
@@ -25,14 +40,20 @@ export class LinkService {
   }
 
   private loadLinks() {
+    this._loading.set(true);
     const linksCollection = collection(this.firestore, 'links');
     const q = query(linksCollection, orderBy('createdAt', 'desc'));
-    
-    collectionData(linksCollection, { idField: 'id' }).pipe(
-      takeUntilDestroyed()
+
+    from(getDocs(q)).pipe(
+      map(snapshot => {
+        return snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Link[];
+      })
     ).subscribe({
-      next: (data: any[]) => {
-        this._links.set(data as Link[]);
+      next: (data) => {
+        this._links.set(data);
         this._loading.set(false);
       },
       error: (err) => {
@@ -51,6 +72,8 @@ export class LinkService {
       };
       const linksCollection = collection(this.firestore, 'links');
       await addDoc(linksCollection, newLink);
+      // Reload links since getDocs is not realtime
+      this.loadLinks();
     } catch (e) {
       this._error.set('Error adding link');
       console.error(e);
@@ -62,6 +85,8 @@ export class LinkService {
     try {
       const docRef = doc(this.firestore, 'links', id);
       await deleteDoc(docRef);
+      // Update local state without refetching for better UX
+      this._links.update(links => links.filter(l => l.id !== id));
     } catch (e) {
       this._error.set('Error deleting link');
       console.error(e);
@@ -72,6 +97,7 @@ export class LinkService {
     try {
       const docRef = doc(this.firestore, 'links', id);
       await updateDoc(docRef, updates);
+      this.loadLinks();
     } catch (e) {
       this._error.set('Error updating link');
       console.error(e);

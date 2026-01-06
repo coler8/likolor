@@ -1,6 +1,6 @@
 {
-  "name": "Link Keeper",
-  "short_name": "LinkKeeper",
+  "name": "Linkolor",
+  "short_name": "Linkolor",
   "theme_color": "#2563eb",
   "background_color": "#f8fafc",
   "display": "standalone",
@@ -9,6 +9,7 @@
   "share_target": {
     "action": "/add",
     "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
     "params": {
       "title": "title",
       "text": "text",

@@ -1,0 +1,156 @@
+<div
+  class="estrellitas fixed inset-0 bg-md-sys-dark-surface z-50 overflow-y-auto">
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <!-- Main Card/Dialog -->
+    <div
+      class="w-full max-w-lg bg-md-sys-dark-surface-container rounded-[28px] p-6 shadow-2xl border border-md-sys-dark-outline-variant/20 animate-in zoom-in-95 duration-300">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-display text-md-sys-dark-on-surface">
+          {{ isEdit ? 'Edit Link' : 'New Link' }}
+        </h2>
+        <button
+          (click)="cancel()"
+          class="p-2 rounded-full hover:bg-md-sys-dark-surface-container-high text-md-sys-dark-outline transition-colors">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-6">
+        <!-- URL Input (Material Text Field Style) -->
+        <div class="relative group">
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg
+              class="h-5 w-5 text-md-sys-dark-outline"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="url"
+            (ngModelChange)="onUrlChange()"
+            placeholder="Paste URL here"
+            class="block w-full pl-12 pr-20 py-4 rounded-xl bg-md-sys-dark-surface-container-high border-none text-md-sys-dark-on-surface placeholder:text-md-sys-dark-outline/50 focus:ring-2 focus:ring-md-sys-dark-primary transition-all text-lg" />
+          <div class="absolute inset-y-0 right-2 flex items-center">
+            <button
+              (click)="fetchMetadata()"
+              [disabled]="loadingMetadata() || !url"
+              class="px-3 py-1.5 rounded-lg text-sm font-medium text-md-sys-dark-primary hover:bg-md-sys-dark-primary/10 disabled:opacity-50 disabled:hover:bg-transparent transition-colors">
+              {{ loadingMetadata() ? 'Fetching...' : 'Fetch' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Preview Card -->
+        @if (fetchedData()) {
+        <div
+          class="bg-md-sys-dark-surface rounded-xl p-4 flex gap-4 border border-md-sys-dark-outline-variant/30 animate-in slide-in-from-top-2">
+          @if (fetchedData()?.imageUrl) {
+          <img
+            [src]="fetchedData()?.imageUrl"
+            class="w-20 h-20 object-cover rounded-lg bg-md-sys-dark-surface-container-high" />
+          }
+          <div class="flex-1 min-w-0 space-y-3">
+            <div>
+              <label
+                class="block text-xs font-medium text-md-sys-dark-primary mb-1 ml-1"
+                >TITLE</label
+              >
+              <input
+                [(ngModel)]="fetchedData()!.title"
+                class="w-full bg-transparent border-b border-md-sys-dark-outline-variant focus:border-md-sys-dark-primary outline-none py-1 text-md-sys-dark-on-surface font-medium" />
+            </div>
+            <div>
+              <label
+                class="block text-xs font-medium text-md-sys-dark-outline mb-1 ml-1"
+                >DESCRIPTION</label
+              >
+              <textarea
+                [(ngModel)]="fetchedData()!.description"
+                rows="1"
+                class="w-full bg-transparent border-b border-md-sys-dark-outline-variant focus:border-md-sys-dark-primary outline-none py-1 text-sm text-md-sys-dark-on-surface/80 resize-none"></textarea>
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- Category Selector -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label
+              class="block text-sm font-medium text-md-sys-dark-on-surface ml-1"
+              >Category</label
+            >
+            <button
+              (click)="isCreatingCategory.set(!isCreatingCategory())"
+              class="text-xs font-medium text-md-sys-dark-primary hover:text-md-sys-dark-primary/80 transition-colors uppercase tracking-wide">
+              {{ isCreatingCategory() ? 'Select Existing' : '+ Create New' }}
+            </button>
+          </div>
+
+          @if (isCreatingCategory()) {
+          <div class="flex gap-2 animate-in fade-in slide-in-from-left-2">
+            <input
+              type="text"
+              [(ngModel)]="newCategoryName"
+              placeholder="New category name..."
+              (keydown.enter)="createNewCategory()"
+              class="block w-full px-4 py-3.5 rounded-xl bg-md-sys-dark-surface-container-high border-none text-md-sys-dark-on-surface placeholder:text-md-sys-dark-outline/50 focus:ring-2 focus:ring-md-sys-dark-primary transition-all" />
+            <button
+              (click)="createNewCategory()"
+              [disabled]="creatingCategory() || !newCategoryName"
+              class="px-4 py-2 bg-md-sys-dark-primary text-md-sys-dark-on-primary rounded-xl font-medium disabled:opacity-50">
+              {{ creatingCategory() ? '...' : 'Add' }}
+            </button>
+          </div>
+          } @else {
+          <select
+            [(ngModel)]="category"
+            class="w-full rounded-xl border-none p-4 bg-md-sys-dark-surface-container-high text-md-sys-dark-on-surface focus:ring-2 focus:ring-md-sys-dark-primary cursor-pointer appearance-none animate-in fade-in">
+            @for (cat of categoryService.categories(); track cat.id) {
+            <option [value]="cat.id">{{ cat.name }}</option>
+            } @if (categoryService.categories().length === 0) {
+            <option value="general">General Collection</option>
+            }
+          </select>
+          }
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3 pt-4">
+          <button
+            (click)="cancel()"
+            class="px-6 py-3 rounded-full font-medium text-md-sys-dark-primary hover:bg-md-sys-dark-primary/10 transition-colors">
+            Cancel
+          </button>
+          <button
+            (click)="save()"
+            [disabled]="!url || loading()"
+            class="px-8 py-3 rounded-full font-medium bg-md-sys-dark-primary text-md-sys-dark-on-primary shadow-lg shadow-md-sys-dark-primary/20 hover:shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100">
+            {{ loading() ? 'Saving...' : 'Save' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

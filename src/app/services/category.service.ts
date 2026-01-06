@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { Firestore, collection, addDoc, deleteDoc, doc, updateDoc, collectionData, query, orderBy } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, getDocs } from '@angular/fire/firestore';
 import { Category } from '../models/data.models';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { from, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,16 +18,19 @@ export class CategoryService {
 
   private loadCategories() {
     const categoriesCollection = collection(this.firestore, 'categories');
-    // Default categories if empty? logic can be added here
-    
-    collectionData(categoriesCollection, { idField: 'id' }).pipe(
-      takeUntilDestroyed()
+
+    from(getDocs(categoriesCollection)).pipe(
+      map(snapshot => {
+        return snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Category[];
+      })
     ).subscribe(data => {
       if (data.length === 0) {
-        // Initialize defaults if needed, or just leave empty
         this._categories.set(this.getDefaultCategories());
       } else {
-        this._categories.set(data as Category[]);
+        this._categories.set(data);
       }
     });
   }
@@ -40,8 +43,10 @@ export class CategoryService {
     ];
   }
 
-  async addCategory(name: string, color: string) {
+  async addCategory(name: string, color: string): Promise<string> {
     const col = collection(this.firestore, 'categories');
-    await addDoc(col, { name, color, icon: 'folder' });
+    const docRef = await addDoc(col, { name, color, icon: 'folder' });
+    this.loadCategories();
+    return docRef.id;
   }
 }
