@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { CategoryService } from '../../services/category.service';
 import { LinkService } from '../../services/link.service';
 import { LinkCardComponent } from '../../shared/components/link-card/link-card.component';
+import { VideoModalComponent } from '../../shared/components/video-modal/video-modal.component';
 import { RouterLink, Router } from '@angular/router';
 import { Link } from '../../models/data.models';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, LinkCardComponent, RouterLink],
+  imports: [CommonModule, FormsModule, LinkCardComponent, VideoModalComponent, RouterLink],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent {
@@ -21,6 +22,7 @@ export class DashboardComponent {
   selectedCategory = signal<string | null>(null);
   selectedPlatform = signal<string | null>(null);
   showPlatformFilter = signal(false);
+  activeVideo = signal<Link | null>(null);
 
   platforms = ['youtube', 'instagram', 'twitter', 'tiktok', 'facebook'];
 
@@ -78,8 +80,16 @@ export class DashboardComponent {
   }
 
   deleteLink(id: string) {
-    if (confirm('Are you sure you want to delete this link?')) {
+    if (confirm('¿Estás seguro de que quieres eliminar este enlace?')) {
       this.linkService.deleteLink(id);
     }
+  }
+
+  playVideo(link: Link) {
+    this.activeVideo.set(link);
+  }
+
+  closeVideo() {
+    this.activeVideo.set(null);
   }
 }

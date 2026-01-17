@@ -22,6 +22,7 @@ export class EditLinkComponent implements OnInit {
     fetchedData = signal<{ title: string, description?: string, imageUrl?: string } | null>(null);
     loadingMetadata = signal(false);
     loading = signal(false);
+    showCopySuccess = signal(false);
 
     // Category creation state
     isCreatingCategory = signal(false);
@@ -85,7 +86,7 @@ export class EditLinkComponent implements OnInit {
             });
             this.router.navigate(['/']);
         } catch (e) {
-            alert('Error updating link');
+            alert('Error al actualizar el enlace');
         } finally {
             this.loading.set(false);
         }
@@ -104,6 +105,35 @@ export class EditLinkComponent implements OnInit {
             console.error('Failed to create category', error);
         } finally {
             this.creatingCategory.set(false);
+        }
+    }
+
+    async shareLink() {
+        if (!this.url) return;
+        const data = this.fetchedData();
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: data?.title || 'Likolor Link',
+                    text: data?.description || '',
+                    url: this.url
+                });
+            } else {
+                this.copyLink();
+            }
+        } catch (error) {
+            console.error('Error sharing', error);
+        }
+    }
+
+    async copyLink() {
+        if (!this.url) return;
+        try {
+            await navigator.clipboard.writeText(this.url);
+            this.showCopySuccess.set(true);
+            setTimeout(() => this.showCopySuccess.set(false), 2000);
+        } catch (error) {
+            console.error('Error copying', error);
         }
     }
 

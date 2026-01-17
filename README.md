@@ -1,59 +1,74 @@
-# LinkKeeper
+# 🌈 Likolor
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+![Likolor Banner](public/assets/images/banner.png)
 
-## Development server
+### Tu colección de enlaces, reinventada.
 
-To start a local development server, run:
+**Likolor** es una aplicación web progresiva (PWA) diseñada para aquellos que necesitan organizar su vida digital con estilo. Olvídate de los marcadores aburridos y desorganizados del navegador; con Likolor, tus enlaces cobran vida en una interfaz moderna, colorida y altamente funcional.
 
-```bash
-ng serve
-```
+---
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## ✨ Características Principales
 
-## Code scaffolding
+![Likolor Preview](public/assets/images/preview.png)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- **🎨 Diseño Bento Grid**: Una interfaz visualmente impresionante basada en el estilo Bento, que organiza tus enlaces de forma limpia y atractiva.
+- **📱 Experiencia PWA**: Instala la aplicación en tu móvil u ordenador y accede a tus enlaces como si fuera una app nativa, incluso sin conexión.
+- **🔍 Extracción de Metadatos**: Simplemente pega un enlace y Likolor extraerá automáticamente el título, la descripción y una imagen de vista previa.
+- **🏷️ Categorización Inteligente**: Organiza tus enlaces por categorías personalizadas para encontrarlos en segundos.
+- **⚡ Rendimiento de Próxima Generación**: Construido con **Angular v20**, aprovechando Signals para una reactividad instantánea y fluida.
+- **🔥 Sincronización en Tiempo Real**: Gracias a **Firebase Firestore**, tus enlaces están seguros y sincronizados en todos tus dispositivos.
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🛠️ Stack Tecnológico
 
-```bash
-ng generate --help
-```
+Likolor utiliza las herramientas más modernas del ecosistema web:
 
-## Building
+- **Framework**: [Angular v20](https://angular.dev/) (Zoneless, Signals)
+- **Estilos**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Backend**: [Firebase](https://firebase.google.com/) (Firestore & Auth)
+- **PWA**: Angular Service Worker
+- **Testing**: Vitest
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## 🚀 Comenzando
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Requisitos previos
 
-## Running unit tests
+- Node.js (v18 o superior)
+- npm o yarn
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Instalación
 
-```bash
-ng test
-```
+1. Clona el repositorio:
 
-## Running end-to-end tests
+   ```bash
+   git clone https://github.com/tu-usuario/likolor.git
+   cd likolor
+   ```
 
-For end-to-end (e2e) testing, run:
+2. Instala las dependencias:
 
-```bash
-ng e2e
-```
+   ```bash
+   npm install
+   ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+3. Inicia el servidor de desarrollo:
 
-## Additional Resources
+   ```bash
+   npm start
+   ```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+4. Abre tu navegador en `http://localhost:4200` y ¡disfruta!
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Siéntete libre de usarlo, modificarlo y compartirlo.
+
+---
+
+Desarrollado con ❤️ por [Coler8 SP](https://github.com/Coler8)
