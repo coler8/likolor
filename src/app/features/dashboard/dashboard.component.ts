@@ -7,6 +7,7 @@ import { LinkCardComponent } from '../../shared/components/link-card/link-card.c
 import { VideoModalComponent } from '../../shared/components/video-modal/video-modal.component';
 import { RouterLink, Router } from '@angular/router';
 import { Link } from '../../models/data.models';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,6 +18,7 @@ import { Link } from '../../models/data.models';
 export class DashboardComponent {
   linkService = inject(LinkService);
   categoryService = inject(CategoryService);
+  authService = inject(AuthService);
 
   searchTerm = signal('');
   selectedCategory = signal<string | null>(null);

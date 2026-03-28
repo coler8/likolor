@@ -6,41 +6,41 @@
   <!-- Image/Thumbnail Container -->
   <div class="h-32 sm:h-40 w-full p-[10px] relative">
     @if (link.imageUrl) {
-    <img
-      [src]="link.imageUrl"
-      (error)="handleImageError($event)"
-      class="w-full h-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-105"
-      alt="Thumbnail" />
+      <img
+        [src]="link.imageUrl"
+        (error)="handleImageError($event)"
+        class="w-full h-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-105"
+        alt="Thumbnail" />
     } @else {
-    <img
-      [src]="defaultImage"
-      class="w-full h-full object-cover rounded-2xl opacity-40 grayscale"
-      alt="Default Thumbnail" />
+      <img
+        [src]="defaultImage"
+        class="w-full h-full object-cover rounded-2xl opacity-40 grayscale"
+        alt="Default Thumbnail" />
     }
 
     <!-- Platform Badge -->
     @if (link.platform) {
-    <div
-      [class]="
-        'absolute top-2 right-2 px-2 py-1 rounded-lg text-[8px] font-bold tracking-wider uppercase shadow-lg backdrop-blur-md border border-white/10 ' +
-        platformBadgeClasses
-      ">
-      {{ link.platform }}
-    </div>
+      <div
+        [class]="
+          'absolute top-2 right-2 px-2 py-1 rounded-lg text-[8px] font-bold tracking-wider uppercase shadow-lg backdrop-blur-md border border-white/10 ' +
+          platformBadgeClasses
+        ">
+        {{ link.platform }}
+      </div>
     }
 
     <!-- Play Button Overlay -->
     @if (isPlayable) {
-    <div
-      (click)="onPlay.emit(link); $event.stopPropagation()"
-      class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors cursor-pointer z-10">
       <div
-        class="w-12 h-12 flex items-center justify-center rounded-full bg-md-sys-dark-primary text-md-sys-dark-on-primary shadow-xl scale-90 group-hover:scale-100 transition-transform text-white">
-        <svg class="w-6 h-6">
-          <use href="#icon-play"></use>
-        </svg>
+        (click)="onPlay.emit(link); $event.stopPropagation()"
+        class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors cursor-pointer z-10">
+        <div
+          class="w-12 h-12 flex items-center justify-center rounded-full bg-md-sys-dark-primary text-md-sys-dark-on-primary shadow-xl scale-90 group-hover:scale-100 transition-transform text-white">
+          <svg class="w-6 h-6">
+            <use href="#icon-play"></use>
+          </svg>
+        </div>
       </div>
-    </div>
     }
   </div>
 
@@ -58,10 +58,10 @@
 
       <!-- Description -->
       @if (link.description) {
-      <p
-        class="line-clamp-2 text-[11px] sm:text-xs text-md-sys-dark-outline leading-tight">
-        {{ link.description }}
-      </p>
+        <p
+          class="line-clamp-2 text-[11px] sm:text-xs text-md-sys-dark-outline leading-tight">
+          {{ link.description }}
+        </p>
       }
     </div>
 
@@ -76,27 +76,29 @@
         >
       </div>
 
-      <div class="flex gap-0.5 relative z-10">
-        <!-- Edit Button -->
-        <button
-          (click)="onEdit.emit(link); $event.stopPropagation()"
-          class="p-1.5 hover:bg-md-sys-dark-surface rounded-full text-md-sys-dark-outline hover:text-md-sys-dark-primary transition-colors"
-          title="Edit">
-          <svg class="w-3.5 h-3.5">
-            <use href="#icon-edit"></use>
-          </svg>
-        </button>
+      @if (authService.currentUser()) {
+        <div class="flex gap-0.5 relative z-10">
+          <!-- Edit Button -->
+          <button
+            (click)="onEdit.emit(link); $event.stopPropagation()"
+            class="p-1.5 hover:bg-md-sys-dark-surface rounded-full text-md-sys-dark-outline hover:text-md-sys-dark-primary transition-colors"
+            title="Edit">
+            <svg class="w-3.5 h-3.5">
+              <use href="#icon-edit"></use>
+            </svg>
+          </button>
 
-        <!-- Delete Button -->
-        <button
-          (click)="onDelete.emit(link.id); $event.stopPropagation()"
-          class="p-1.5 hover:bg-md-sys-dark-surface rounded-full text-md-sys-dark-outline hover:text-red-400 transition-colors"
-          title="Delete">
-          <svg class="w-3.5 h-3.5">
-            <use href="#icon-delete"></use>
-          </svg>
-        </button>
-      </div>
+          <!-- Delete Button -->
+          <button
+            (click)="onDelete.emit(link.id); $event.stopPropagation()"
+            class="p-1.5 hover:bg-md-sys-dark-surface rounded-full text-md-sys-dark-outline hover:text-red-400 transition-colors"
+            title="Delete">
+            <svg class="w-3.5 h-3.5">
+              <use href="#icon-delete"></use>
+            </svg>
+          </button>
+        </div>
+      }
     </div>
   </div>
 </div>

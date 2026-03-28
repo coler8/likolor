@@ -4,6 +4,7 @@ import { Link } from '../../../models/data.models';
 import { CategoryService } from '../../../services/category.service';
 import { MetadataService } from '../../../services/metadata.service';
 import { LinkService } from '../../../services/link.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-link-card',
@@ -22,6 +23,7 @@ export class LinkCardComponent {
   metadataService = inject(MetadataService);
   linkService = inject(LinkService);
   categoryService = inject(CategoryService);
+  authService = inject(AuthService);
 
   async handleImageError(event: any) {
     const url = this.link.url;
