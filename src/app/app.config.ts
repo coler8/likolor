@@ -2,10 +2,10 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode, provi
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
-import { environment } from '../environments/environment';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAuth, getAuth } from '@angular/fire/auth';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [

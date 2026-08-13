@@ -10,7 +10,9 @@ export class CategoryService {
   private firestore = inject(Firestore);
 
   private _categories = signal<Category[]>([]);
-  categories = computed(() => this._categories());
+  categories = computed(() => 
+    [...this._categories()].sort((a, b) => a.name.localeCompare(b.name))
+  );
 
   constructor() {
     this.loadCategories();
